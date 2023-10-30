@@ -8,7 +8,7 @@ import plotly.express as px
 # ---------------- SETTINGS -------------------
 page_title = 'Titel'
  #https://www.webfx.com/tools/emoji-cheat-sheet/
-page_icon = ':waving_hand:'
+page_icon = '👋'
 layout = 'centered'
 
 st.set_page_config(
