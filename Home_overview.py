@@ -8,7 +8,7 @@ import time
 # ---------------- SETTINGS -------------------
 page_title = 'Eindproject VA'
 # https://www.webfx.com/tools/emoji-cheat-sheet/
-page_icon = ':oncoming_automobile:'
+page_icon = ':waving_hand:'
 layout = 'centered'
 
 st.set_page_config(
