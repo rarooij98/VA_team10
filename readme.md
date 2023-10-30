@@ -1,5 +1,5 @@
 # Title
-This app shows the data of ...
+This app shows ...
 
 ## Prerequisites
 
