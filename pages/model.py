@@ -19,10 +19,12 @@ st.set_page_config(
 )
 
 # ----------------- DATA ----------------------
-# import data
+CO2 = pd.read_csv("./data/CO2.csv")
+GDP = pd.read_csv("./data/GDP.csv")
+df = pd.read_csv("./data/df.csv")
 
 # ----------------- PAGES ---------------------
 st.title(page_title + ' ' + page_icon)
 
-
 # page content ...
+st.write(df)
