@@ -53,25 +53,25 @@ def plot_model(data, prediction):
         fig.add_trace(trace)
     # Set the layout and show the plot
     fig.update_layout(xaxis_title="Jaar", yaxis_title="CO2 Emissies (Tons)")
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 #* Simple model
-def create_model(data, y):
-    # With this DataFrame, create a model that predicts the total emissions for the years 2021-2050
-    model = ols(f"{y} ~ Year", data=data).fit()
-    # Make a prediction for the years 2021-2050 using the model
-    explanatory_data = pd.DataFrame({"Year": np.arange(2021, 2051)})
-    prediction_data = explanatory_data.assign(Emission=model.predict(explanatory_data))
-    # Revert the log transformation if needed
-    if (y == 'Log_Emission'):
-        prediction_data['Emission'] = np.exp(prediction_data['Emission'])
+# def create_model(data, y):
+#     # With this DataFrame, create a model that predicts the total emissions for the years 2021-2050
+#     model = ols(f"{y} ~ Year", data=data).fit()
+#     # Make a prediction for the years 2021-2050 using the model
+#     explanatory_data = pd.DataFrame({"Year": np.arange(2021, 2051)})
+#     prediction_data = explanatory_data.assign(Emission=model.predict(explanatory_data))
+#     # Revert the log transformation if needed
+#     if (y == 'Log_Emission'):
+#         prediction_data['Emission'] = np.exp(prediction_data['Emission'])
     
-    # Call function to plot the model
-    plot_model(data, prediction_data)
-    return prediction_data
+#     # Call function to plot the model
+#     plot_model(data, prediction_data)
+#     return prediction_data
 
-create_model(total_emissions, 'Emission')
-create_model(total_emissions, 'Log_Emission')
+# create_model(total_emissions, 'Emission')
+# create_model(total_emissions, 'Log_Emission')
 
 #* Multivariable model
 def create_mv_model(data, y):
@@ -97,5 +97,22 @@ def create_mv_model(data, y):
     plot_model(data, prediction_data)
     return prediction_data
     
-create_mv_model(total_data, 'Emission')
-create_mv_model(total_data, 'Log_Emission')
+#* Calling the model functions conditionally with button inputs
+col1, col2 = st.columns([3, 1])
+
+with col2:
+    #~ Display buttons
+   model_lin = st.button("Lineair", type="primary")
+   model_log = st.button("Logaritmic", type="primary")
+
+with col1:
+    #~ Display models
+    if model_lin:
+        create_mv_model(total_data, 'Emission')
+    if model_log:
+        create_mv_model(total_data, 'Log_Emission')
+    else:
+        create_mv_model(total_data, 'Emission') #? Default option
+    
+# create_mv_model(total_data, 'Emission')
+# create_mv_model(total_data, 'Log_Emission')
