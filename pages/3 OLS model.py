@@ -1,16 +1,15 @@
-import numpy as np
-import pandas as pd
 import streamlit as st
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
-import statsmodels.api as sm
 import seaborn as sns
 import plotly.express as px
+import statsmodels.api as sm
 from statsmodels.formula.api import ols
 
 # ---------------- SETTINGS -------------------
 page_title = 'OLS model'
-page_icon = '📈' # https://html-css-js.com/html/character-codes/
-#layout = 'centered'
+page_icon = '📈' # https://www.webfx.com/tools/emoji-cheat-sheet/
 layout = 'wide'
 
 st.set_page_config(
@@ -168,18 +167,18 @@ def user_inputs():
     # Display dropdowns
     with col2:
         model_data = st.selectbox(
-        'Welke dataset wil je zien?',
-        ('Totaal', 'Per land')
+        'Uitstoot data',
+        ('Totaal wereldwijd', 'Per land')
         )
-        if model_data == 'Totaal':
+        if model_data == 'Totaal wereldwijd':
             model_type = st.selectbox(
-                'Wat voor model wil je zien?',
+                'Axis scale',
                 ('Lineair', 'Logaritmisch')
             )
     
     # Display models conditionally
     with col1:
-        if model_data == 'Totaal':
+        if model_data == 'Totaal wereldwijd':
             if model_type == 'Lineair':
                 create_mv_model(total_data, 'Emission')
             elif model_type == 'Logaritmisch':
@@ -188,3 +187,6 @@ def user_inputs():
                 countries_model(df_mv)
 
 user_inputs()
+
+# Sources
+# st.caption('Data: CO2 Emission by countries Year wise (1750-2022), https://www.kaggle.com/datasets/moazzimalibhatti/co2-emission-by-countries-year-wise-17502022')
