@@ -139,22 +139,49 @@ def create_mv_model(data, y):
     plot_model(data, prediction_data, model)
     return prediction_data
     
-#* Calling the model functions conditionally with button inputs
-col1, col2 = st.columns([3, 1])
-
-with col2:
-    #~ Display buttons
-   model_lin = st.button("Lineair", type="primary")
-   model_log = st.button("Logaritmic", type="primary")
-
-with col1:
-    #~ Display models
-    if model_lin:
-        create_mv_model(total_data, 'Emission')
-    if model_log:
-        create_mv_model(total_data, 'Log_Emission')
-    else:
-        create_mv_model(total_data, 'Emission') #? Default option
+#* Using button inputs to call the model functions conditionally
+def button_inputs():
+    model_lin = True # Show Linear model on load
     
-# create_mv_model(total_data, 'Emission')
-# create_mv_model(total_data, 'Log_Emission')
+    col1, col2 = st.columns([3, 1])
+    with col2:
+        # Display buttons
+        if st.button("Linear", key="linear_button"):
+            model_lin = True
+            model_log = False
+    
+        if st.button("Logarithmic", key="logarithmic_button"):
+            model_log = True
+            model_lin = False
+    with col1:
+        # Display models
+        if model_lin == True:
+            create_mv_model(total_data, 'Emission')
+        elif model_log == True:
+            create_mv_model(total_data, 'Log_Emission')
+     
+    # Custom styling
+    button_style = """
+        <style>
+            .stButton > button {
+                background-color: #131720;
+                color: #ffffff !important;
+                transition: background-color 0.3s;
+                border: none;
+            }
+            .stButton > button:hover {
+                background-color: #262E40;
+                color: #ffffff !important;
+                border: none;
+            }
+            .stButton > button:focus {
+                background-color: #FF4B4B;
+                color: #ffffff !important;
+                border: none;
+            }
+        </style>
+    """
+    st.markdown(button_style, unsafe_allow_html=True)
+    
+#* Call the function
+button_inputs()
