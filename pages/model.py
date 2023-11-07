@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 import seaborn as sns
 import plotly.express as px
+import plotly.graph_objects as go
 from statsmodels.formula.api import ols
 
 # ---------------- SETTINGS -------------------
@@ -40,8 +41,34 @@ total_emissions = total_emissions.reset_index()
 total_emissions.columns = ['Year', 'Emission']
 total_emissions['Log_Emission'] = np.log(total_emissions['Emission'])
 
+#* Visualize model fit:
+def model_fit(data, prediction_data, model):
+    fig, axes = plt.subplots(2, 2, figsize=(12, 8))
+    
+    # Plot the regression line and scatter points
+    sns.regplot(x="Year", y="Emission", data=data, ax=axes[0, 0])
+    sns.scatterplot(x="Year", y="Emission", data=prediction_data, color='red', ax=axes[0, 0])
+    axes[0, 0].set_title("Prediction")
+    
+    # Residuals vs Fitted values
+    residuals = model.resid
+    sns.residplot(x=model.fittedvalues, y=residuals, lowess=True, line_kws={'color': 'red'}, ax=axes[0, 1])
+    axes[0, 1].set_title("Residuals vs Fitted Values")
+    
+    # Q-Q plot
+    sm.qqplot(residuals, fit=True, line="45", ax=axes[1, 0])
+    axes[1, 0].set_title("Q-Q Plot")
+    
+    # Scale-location plot
+    sns.regplot(x=model.fittedvalues, y=np.sqrt(np.abs(residuals)), ci=None, lowess=True, line_kws={'color': 'red'}, ax=axes[1, 1])
+    axes[1, 1].set_title("Scale-Location Plot")
+    
+    plt.tight_layout()
+    st.pyplot(fig, use_container_width=True)
+# model_fit(data, prediction_data, model)
+
 #* Function to plot each model:
-def plot_model(data, prediction):
+def plot_model(data, prediction, model):
     # Create a scatter plot for the actual data
     fig = px.scatter(data, x="Year", y="Emission", title="Predictie totale CO2 emissies tot 2050", hover_data=["Year", "Emission"], trendline="ols")
     fig.update_traces(marker=dict(color="blue", symbol="circle"))
@@ -53,7 +80,22 @@ def plot_model(data, prediction):
         fig.add_trace(trace)
     # Set the layout and show the plot
     fig.update_layout(xaxis_title="Jaar", yaxis_title="CO2 Emissies (Tons)")
-    st.plotly_chart(fig, use_container_width=True)
+    # st.plotly_chart(fig, use_container_width=True)
+    
+    # Create 3 tabs: plot, summary & fit assessment
+    tab1, tab2, tab3 = st.tabs(["Model", "Summary", "Fit"])
+
+    with tab1:
+       st.header("Model")
+       st.plotly_chart(fig, use_container_width=True)
+    
+    with tab2:
+       st.header("Summary")
+       st.write(model.summary())
+    
+    with tab3:
+       st.header("Fit")
+       model_fit(data, prediction, model)
 
 #* Simple model
 # def create_model(data, y):
@@ -85,16 +127,16 @@ def create_mv_model(data, y):
     prediction_data_pop = explanatory_data_pop.assign(Population=mdl_pop.predict(explanatory_data_pop))
 
     # Create a multivariable model with the GDP & Population predictions
-    mv_model = ols(f"{y} ~ Year + GDP + Population", data=data).fit()
+    model = ols(f"{y} ~ Year + GDP + Population", data=data).fit()
     # Make a prediction for the years 2021-2050 using the multivariable model
     explanatory_data = pd.DataFrame({"Year": np.arange(2021, 2051), "GDP": prediction_data_gdp['GDP'], "Population": prediction_data_pop['Population']})
-    prediction_data = explanatory_data.assign(Emission=mv_model.predict(explanatory_data))
+    prediction_data = explanatory_data.assign(Emission=model.predict(explanatory_data))
     # Revert the log transformation if needed
     if (y == 'Log_Emission'):
         prediction_data['Emission'] = np.exp(prediction_data['Emission'])
     
     # Call function to plot the model
-    plot_model(data, prediction_data)
+    plot_model(data, prediction_data, model)
     return prediction_data
     
 #* Calling the model functions conditionally with button inputs
