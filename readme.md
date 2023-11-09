@@ -1,4 +1,4 @@
-# 🌎 CO2 uitstoot & GDP
+# 🌎 CO2 emissions & GDP
 In this Streamlit app we examine the CO2 emissions of countries over the years and compare a country's emissions with their GDP. Which countries emit the most CO2, do they have a higher GDP? We use a linear regression model to predict emissions for future years based on the GDP and Population of countries.
 
 ## Dependencies
