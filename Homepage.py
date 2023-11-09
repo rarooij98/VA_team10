@@ -7,7 +7,7 @@ import time
 
 # ---------------- SETTINGS -------------------
 page_title = 'CO2 uitstoot & GDP'
-page_icon = '🌎' # https://www.webfx.com/tools/emoji-cheat-sheet/
+page_icon = '🌎' # https://html-css-js.com/html/character-codes/
 layout = 'centered'
 
 st.set_page_config(
