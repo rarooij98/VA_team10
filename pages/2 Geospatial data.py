@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 # ---------------- SETTINGS -------------------
-page_title = 'Map'
+page_title = 'Geospatial data'
 page_icon = '🌏' # https://html-css-js.com/html/character-codes/
 layout = 'centered'
 
