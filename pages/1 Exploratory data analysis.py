@@ -49,13 +49,13 @@ def scatterplot(df):
     st.plotly_chart(fig, use_container_width=True)
 
 #* Call each plot in their own tab
-tab1, tab2, tab3 = st.tabs(["Boxplot", "Scatterplot", "Histogram"])
+# tab1, tab2, tab3 = st.tabs(["Boxplot", "Scatterplot", "Histogram"])
+tab1, tab2 = st.tabs(["1D", "2D"])
+
 with tab1:
    boxplot(df)
 with tab2:
    scatterplot(df)
-with tab3:
-   st.write('Histogram')
 
 # Sources
 # st.caption('Data: CO2 Emission by countries Year wise (1750-2022), https://www.kaggle.com/datasets/moazzimalibhatti/co2-emission-by-countries-year-wise-17502022')
