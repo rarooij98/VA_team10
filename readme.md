@@ -1,7 +1,7 @@
-# Title
-We onderzoeken de CO2 emissies van landen over de jaren heen, en vergelijken de emissies van een land met het GDP. 
-         Stoten landen met een hoger GDP meer uit, is deze verhouding over de jaren heen veranderd? We gebruiken een lineair 
-         regressie model om de uitstoot voor komende jaren te voorspellen.
+# CO2 uitstoot & GDP
+In deze Streamlit app onderzoeken we de CO2 emissies van landen over de jaren heen, en vergelijken de emissies van een land met het GDP. 
+         Welke landen stoten het meeste CO2 uit, hebben zij een hoger GDP? We gebruiken een lineair 
+         regressie model om de uitstoot voor komende jaren te voorspellen aan de hand van de GDP en Population van landen.
 
 ## Prerequisites
 
@@ -48,25 +48,16 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-## Context
-
-
-# Dataset Column Information
-
-Here is a breakdown of the columns in the dataset:
-...
-
 ## Column Explanations
 
-* "Country":
-* "Code":
-* "Year":
-* "GDP":
-* "Calling Code":
-* "CO2 emission (Tons)":
-* "Population(2022)":
-* "Area":
-* "% of World":
-* "Density(km2)":
-* "latitude":
-* "longitude":
+Here is a breakdown of the columns in the dataset:
+
+* "Country": Name of Country
+* "Code": ISO alpha-3 calling code of every country
+* "Year": Year of CO2 emission / GDP
+* "GDP": GDP of every country
+* "Calling Code": Calling code of every country
+* "CO2 emission (Tons)": Amount of CO2 emission in Tons
+* "Area": Area of that country in km2
+* "% of World": How much % of World landmass, this country covered
+* "Density(km2)": Density according to Area in km2

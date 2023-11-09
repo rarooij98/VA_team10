@@ -25,11 +25,13 @@ st.title(page_title + ' ' + page_icon)
 
 st.write('''
          #### Introductie 
-         We onderzoeken de CO2 emissies van landen over de jaren heen, en vergelijken de emissies van een land met het GDP. 
-         Stoten landen met een hoger GDP meer uit, is deze verhouding over de jaren heen veranderd? We gebruiken een lineair 
-         regressie model om de uitstoot voor komende jaren te voorspellen.
+         In deze Streamlit app onderzoeken we de CO2 emissies van landen over de jaren heen, en vergelijken de emissies van een land met het GDP. 
+         Welke landen stoten het meeste CO2 uit, hebben zij een hoger GDP? We gebruiken een lineair 
+         regressie model om de uitstoot voor komende jaren te voorspellen aan de hand van de GDP en Population van landen.
 ''')
 
 # Show DataFrame with emission and GDP for each country per year
 st.write('#### DataFrame')
+
+df = df[['Country', 'Code', 'Year', 'GDP', 'CO2 emission (Tons)', 'Area', '% of World', 'Density(km2)']]
 st.write(df)
