@@ -20,9 +20,7 @@ st.set_page_config(
 )
 
 # ----------------- DATA ----------------------
-CO2 = pd.read_csv("./data/CO2.csv")
-GDP = pd.read_csv("./data/GDP.csv")
-df = pd.read_csv("./data/df.csv")
+CO2 = pd.read_csv("./data/CO2.csv", decimal='.')
 df_mv = pd.read_csv("./data/df_mv.csv")
 total_data = pd.read_csv("./data/total_data.csv")
 
@@ -78,11 +76,20 @@ def plot_model(data, prediction, model):
     for trace in predictions_fig.data:
         fig.add_trace(trace)
     
+    # Calculations for the text
+    em_2050 = round(prediction[prediction['Year']==2050]['Emission'].tolist()[0], 2)
+    em_2020 = data[data['Year']==2020]['Emission'].tolist()[0]
+    verschil = (prediction[prediction['Year']==2050]['Emission'].tolist()[0] - data[data['Year']==2020]['Emission'].tolist()[0])
+    toename = round((verschil/em_2020)*100, 2)
+    
     # Set the layout and show the plot
     fig.update_layout(xaxis_title="Jaar", yaxis_title="CO2 Emissies (Ton)")
     # Create 3 tabs: plot, summary & fit assessment
     tab1, tab2, tab3 = st.tabs(["Model", "Summary", "Fit"])
     with tab1:
+       st.code(f'model = ols("Emission ~ GDP + Population", data=df).fit()')
+       st.markdown(f"Volgens deze voorspelling wordt de uitstoot voor 2050: **{em_2050} Ton**, of zo'n **{round(em_2050/1000000000000, 2)} triljoen Ton**.")
+       st.markdown(f'Dat is een toename van **{toename}%** vergeleken met 2020.')
        st.plotly_chart(fig, use_container_width=True)
     with tab2:
        st.write(model.summary())
@@ -100,8 +107,16 @@ def plot_model_countries(data, prediction):
     # Add traces from predictions_fig to fig
     for trace in predictions_fig.data:
         fig.add_trace(trace)
+    
+    # Calculations for the text
+    max_em = prediction[prediction['Year']==2050]['Emission'].sort_values(ascending=False).iloc[0]
+    verschil_china = round((max_em/prediction[(prediction['Year']==2050) & (prediction['Country']=='China')]['Emission']).tolist()[0], 2)
+    verschil_nl = round((max_em/prediction[(prediction['Year']==2050) & (prediction['Country']=='Netherlands')]['Emission']).tolist()[0], 2)
+    
     # Set the layout and show the plot
     fig.update_layout(xaxis_title="Jaar", yaxis_title="CO2 Emissies (Ton)")
+    st.markdown(f"Het land met de hoogste uitstoot in 2050 is de VS met **{max_em} Ton**, of zo'n **{round(max_em/1000000000, 0)} biljoen Ton**.")
+    st.markdown(f"Dat is **{verschil_china}x** zoveel als China en **{verschil_nl}x** zoveel als Nederland.")
     st.plotly_chart(fig, use_container_width=True)
 
 #* Multivariable model
