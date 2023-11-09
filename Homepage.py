@@ -18,7 +18,12 @@ st.set_page_config(
 )
 
 # ----------------- DATA ----------------------
-df = pd.read_csv("./data/df.csv")
+@st.cache_data
+def load_data(url):
+    df = pd.read_csv(url)
+    return df
+
+df = load_data("./data/df.csv")
 
 # ----------------- PAGES ---------------------
 st.title(page_title + ' ' + page_icon)

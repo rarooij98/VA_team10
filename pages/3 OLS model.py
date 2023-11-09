@@ -20,9 +20,14 @@ st.set_page_config(
 )
 
 # ----------------- DATA ----------------------
+@st.cache_data
+def load_data(url):
+    df = pd.read_csv(url)
+    return df
+
+df_mv = load_data("./data/df_mv.csv")
+total_data =load_data("./data/total_data.csv")
 CO2 = pd.read_csv("./data/CO2.csv", decimal='.')
-df_mv = pd.read_csv("./data/df_mv.csv")
-total_data = pd.read_csv("./data/total_data.csv")
 
 # ----------------- PAGES ---------------------
 st.title(page_title + ' ' + page_icon)

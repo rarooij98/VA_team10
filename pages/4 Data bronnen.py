@@ -20,11 +20,11 @@ st.set_page_config(
 )
 
 # ----------------- DATA ----------------------
-CO2 = pd.read_csv("./data/CO2.csv")
-GDP = pd.read_csv("./data/GDP.csv")
-df = pd.read_csv("./data/df.csv")
-df_mv = pd.read_csv("./data/df_mv.csv")
-total_data = pd.read_csv("./data/total_data.csv")
+# CO2 = pd.read_csv("./data/CO2.csv")
+# GDP = pd.read_csv("./data/GDP.csv")
+# df = pd.read_csv("./data/df.csv")
+# df_mv = pd.read_csv("./data/df_mv.csv")
+# total_data = pd.read_csv("./data/total_data.csv")
 
 # ----------------- PAGES ---------------------
 st.title(page_title + ' ' + page_icon)
