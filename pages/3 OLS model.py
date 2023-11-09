@@ -84,16 +84,28 @@ def plot_model(data, prediction, model):
     
     # Set the layout and show the plot
     fig.update_layout(xaxis_title="Jaar", yaxis_title="CO2 Emissies (Ton)")
-    # Create 3 tabs: plot, summary & fit assessment
-    tab1, tab2, tab3 = st.tabs(["Model", "Summary", "Fit"])
+    # Create tabs for different info
+    tab1, tab2, tab3, tab4 = st.tabs(["Correlatie", "Model", "Summary", "Fit"])
     with tab1:
+        st.write('''
+        Er is een positieve correlatie tussen CO2 uitstoot en GDP (0.898), en ook een zwakkere positieve correlatie tussen CO2 uitstoot en populatie (0.388).
+        Daarom gebruiken we GDP en populatie als independent variables in ons model om de CO2 uitstoot te voorspellen.
+        ''')
+        df_corr = df_mv[['Year', 'Emission', 'GDP', 'Population', 'Area']]
+        correlation_matrix = df_corr.corr()
+        fig_corr = px.imshow(correlation_matrix, text_auto=True, color_continuous_scale='Blues')
+        st.plotly_chart(fig_corr, use_container_width=True)
+    with tab2:
        st.code(f'model = ols("Emission ~ GDP + Population", data=df).fit()')
        st.markdown(f"Volgens deze voorspelling wordt de uitstoot voor 2050: **{em_2050} Ton**, of zo'n **{round(em_2050/1000000000000, 2)} triljoen Ton**.")
        st.markdown(f'Dat is een toename van **{toename}%** vergeleken met 2020.')
        st.plotly_chart(fig, use_container_width=True)
-    with tab2:
-       st.write(model.summary())
     with tab3:
+       st.write(f'''
+       De R-squared van **{round(model.rsquared, 3)}** betekent dat het model **{round(model.rsquared, 3)}%** van de variatie verklaart.
+       ''')
+       st.write(model.summary())
+    with tab4:
        model_fit(data, prediction, model)
     
 #* Function to plot countries model:
