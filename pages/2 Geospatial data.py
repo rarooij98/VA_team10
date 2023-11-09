@@ -42,7 +42,7 @@ df_2 = df_2[df_2['Population(2022)'] > 0]
 df_2 = df_2[df_2['Area'] > 0]
 df_2 = df_2[df_2['CO2 emission (Tons)'] > 0]
 
-# Drop & rename columns
+# Drop columns not used in the map
 df_map = df_2[['Country', 'Year', 'CO2 emission (Tons)']]
 df_map = df_map.rename(columns={'CO2 emission (Tons)': 'Emissions'})
 
@@ -54,7 +54,7 @@ def co2_map(gdf, df_map):
     m = folium.Map(location=[0, 0], zoom_start=2)
     # Choose Year
     contact_option = df_map['Year']
-    contact_selected = st.selectbox("Kies een jaar", options = contact_option )
+    contact_selected = st.selectbox("Kies een jaar", options=contact_option, key="CO2", index=40)
     df_map = df_map[df_map['Year']==contact_selected]
     # Add choropleth layer
     folium.Choropleth(
@@ -79,7 +79,7 @@ def gdp_map(gdf):
         gdf = gdf[gdf['Country'].isin(df_map_GDP['Country'])]
         # Choose Year
         contact_option_GDP = df_map_GDP['Year']
-        contact_selected_GDP = st.selectbox("Choose your GDP Year", options = contact_option_GDP )
+        contact_selected_GDP = st.selectbox("Kies een jaar", options=contact_option_GDP, key="GDP", index=40)
         df_map = df_map_GDP[df_map_GDP['Year']==contact_selected_GDP]
         # Create the map
         m_GDP = folium.Map(location=[0, 0], zoom_start=2)
@@ -105,9 +105,22 @@ def get_mean(df_2):
         df_3 = df_2.groupby('Country').agg({'GDP': ['mean', 'median', 'sum', 'min', 'max'], 
                                             'CO2 emission (Tons)': ['mean', 'median', 'sum', 'min', 'max']})
         df_3 = df_3.reset_index()
-        contact_option_3 = df_3['Country']
-        contact_selected_3 = st.selectbox("Choose your Country Year", options=contact_option_3 )
+        df_3.columns = [' '.join(col).strip() for col in df_3.columns.values]
+        df_3 = df_3.rename(columns={'Country, ': 'Country',
+                                    ('GDP', 'mean'): 'GDP_mean',
+                                    ('GDP', 'median'): 'GDP_median',
+                                    ('GDP', 'sum'): 'GDP_sum',
+                                    ('GDP', 'min'): 'GDP_min',
+                                    ('GDP', 'max'): 'GDP_max',
+                                    ('CO2 emission (Tons)', 'mean'): 'Emission_mean',
+                                    ('CO2 emission (Tons)', 'median'): 'Emission_median',
+                                    ('CO2 emission (Tons)', 'sum'): 'Emission_sum',
+                                    ('CO2 emission (Tons)', 'min'): 'Emission_min',
+                                    ('CO2 emission (Tons)', 'max'): 'Emission_max'})
+        
         # Display filtered dataset
+        contact_option_3 = df_3['Country']
+        contact_selected_3 = st.selectbox("Kies een jaar", options=contact_option_3, key="mean")
         df_3[df_3['Country']==contact_selected_3]
 
 #* Tabs with content
