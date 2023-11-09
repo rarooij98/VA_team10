@@ -20,9 +20,14 @@ st.set_page_config(
 )
 
 # ----------------- DATA ----------------------
+@st.cache_data
+def load_data(url):
+    df = pd.read_csv(url)
+    return df
+
+df_mv = load_data("./data/df_mv.csv")
+total_data = load_data("./data/total_data.csv")
 CO2 = pd.read_csv("./data/CO2.csv", decimal='.')
-df_mv = pd.read_csv("./data/df_mv.csv")
-total_data = pd.read_csv("./data/total_data.csv")
 
 # ----------------- PAGES ---------------------
 st.title(page_title + ' ' + page_icon)
@@ -60,9 +65,9 @@ def model_fit(data, prediction_data, model):
     plt.tight_layout()
     st.pyplot(fig, use_container_width=True)
     
-    st.caption('* De Q-Q plot kan worden gebruikt om te onderzoeken of de verdeling van de residuals normaal is.')
-    st.caption('* De Residuals versus Fitted Values plot wordt gebruikt om niet-lineariteit en outliers te detecteren. Hiermee zie je of de residuals gelijkmatig verdeeld zijn rond de "0"-waardelijn en of de spreiding en het patroon van de punten op verschillende niveaus hetzelfde zijn.')
-    st.caption('* De Scale-Location plot laat zien of de residuals gelijkmatig verdeeld zijn over de voorspelde waardes. Het is goed als je een horizontale lijn ziet met gelijkmatig (willekeurig) verspreide punten.')
+    #st.caption('* De Q-Q plot kan worden gebruikt om te onderzoeken of de verdeling van de residuals normaal is.')
+    #st.caption('* De Residuals versus Fitted Values plot wordt gebruikt om niet-lineariteit en outliers te detecteren. Hiermee zie je of de residuals gelijkmatig verdeeld zijn rond de "0"-waardelijn en of de spreiding en het patroon van de punten op verschillende niveaus hetzelfde zijn.')
+    #st.caption('* De Scale-Location plot laat zien of de residuals gelijkmatig verdeeld zijn over de voorspelde waardes. Het is goed als je een horizontale lijn ziet met gelijkmatig (willekeurig) verspreide punten.')
 
 #* Function to plot totals model:
 def plot_model(data, prediction, model):
@@ -85,7 +90,7 @@ def plot_model(data, prediction, model):
     # Set the layout and show the plot
     fig.update_layout(xaxis_title="Jaar", yaxis_title="CO2 Emissies (Ton)")
     # Create tabs for different info
-    tab1, tab2, tab3, tab4 = st.tabs(["Correlatie", "Model", "Summary", "Fit"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Correlatie", "Model", "Summary", "Model Fit"])
     with tab1:
         st.write('''
         Er is een positieve correlatie tussen CO2 uitstoot en GDP (0.898), en ook een zwakkere positieve correlatie tussen CO2 uitstoot en populatie (0.388).
@@ -96,17 +101,30 @@ def plot_model(data, prediction, model):
         fig_corr = px.imshow(correlation_matrix, text_auto=True, color_continuous_scale='Blues')
         st.plotly_chart(fig_corr, use_container_width=True)
     with tab2:
-       st.code(f'model = ols("Emission ~ GDP + Population", data=df).fit()')
+       st.code(f'model = ols("{model.model.endog_names} ~ GDP + Population", data=df).fit()')
        st.markdown(f"Volgens deze voorspelling wordt de uitstoot voor 2050: **{em_2050} Ton**, of zo'n **{round(em_2050/1000000000000, 2)} triljoen Ton**.")
        st.markdown(f'Dat is een toename van **{toename}%** vergeleken met 2020.')
        st.plotly_chart(fig, use_container_width=True)
     with tab3:
        st.write(f'''
-       De R-squared van **{round(model.rsquared, 3)}** betekent dat het model **{round(model.rsquared, 3)}%** van de variatie verklaart.
+       De **R-squared** van **{round(model.rsquared, 3)}** betekent dat het model **{round(model.rsquared*100, 1)}%** van de variatie in de afhankelijke variabele **{model.model.endog_names}** kan verklaren.
+       Een R-squared dicht bij 1 betekent dat het model waarschijnlijk passend is voor de data.
+       ''')
+       st.write(f'''
+       De **F-statistic** vergelijkt het model met een model zonder independent variabels. In dit geval is de F-statistiek: **{round(model.fvalue, 2)}**, een hoog getal betekent dat het model significant is.
        ''')
        st.write(model.summary())
     with tab4:
        model_fit(data, prediction, model)
+       st.caption(f'''
+       * De **Q-Q** plot laat de verdeling van de residuals zien, wanneer deze de lijn volgen is de verdeling normaal.
+       ''')
+       st.caption(f'''
+       * In een goed passend model zouden de residuen in de **Residuals vs Fitted Values** plot willekeurig rond nul verspreid moeten zijn, zonder waarneembare patronen.
+       ''')
+       st.caption(f'''
+       * De **Scale-Location** plot laat zien of de residuals gelijkmatig verdeeld zijn over de voorspelde waardes. Het is goed als je een horizontale lijn ziet met gelijkmatig (willekeurig) verspreide punten.
+       ''')
     
 #* Function to plot countries model:
 def plot_model_countries(data, prediction):
@@ -122,13 +140,17 @@ def plot_model_countries(data, prediction):
     
     # Calculations for the text
     max_em = prediction[prediction['Year']==2050]['Emission'].sort_values(ascending=False).iloc[0]
-    verschil_china = round((max_em/prediction[(prediction['Year']==2050) & (prediction['Country']=='China')]['Emission']).tolist()[0], 2)
     verschil_nl = round((max_em/prediction[(prediction['Year']==2050) & (prediction['Country']=='Netherlands')]['Emission']).tolist()[0], 2)
+    
+    #? Toename = ((nieuw − oud) / oud) * 100
+    china_2020 = data[(data['Year']==2020) & (data['Country']=='China')]['Emission'].astype(float)
+    china_2050 = prediction[(prediction['Year']==2050) & (prediction['Country']=='China')]['Emission'].astype(float)
+    per_china = round(((571437351814 - 236000000000)/236000000000)*100, 2)
     
     # Set the layout and show the plot
     fig.update_layout(xaxis_title="Jaar", yaxis_title="CO2 Emissies (Ton)")
-    st.markdown(f"Het land met de hoogste uitstoot in 2050 is de VS met **{max_em} Ton**, of zo'n **{round(max_em/1000000000, 0)} biljoen Ton**.")
-    st.markdown(f"Dat is **{verschil_china}x** zoveel als China en **{verschil_nl}x** zoveel als Nederland.")
+    st.markdown(f"Het land met de hoogste uitstoot in 2050 is de VS met **{max_em} Ton**, of zo'n **{round(max_em/1000000000, 2)} biljoen Ton**. Dat is **{verschil_nl}x** zoveel als Nederland.")
+    st.markdown(f"Het land met de meeste groei is China met **{per_china}%**.")
     st.plotly_chart(fig, use_container_width=True)
 
 #* Multivariable model
@@ -162,7 +184,8 @@ def countries_model(data):
     years = np.arange(2021, 2051)
     for country in data['Country'].unique():
         country_data = data[data['Country'] == country]
-        mdl_co2_vs_year = ols("GDP ~ Year", data=country_data).fit()
+        # mdl_co2_vs_year = ols("GDP ~ Year", data=country_data).fit()
+        mdl_co2_vs_year = ols("GDP ~ Year + np.power(Year, 2)", data=country_data).fit()
         prediction = mdl_co2_vs_year.predict(exog=pd.DataFrame({'Year': years, 'Intercept': 1}))
         country_predictions = pd.DataFrame({'Country': [country] * len(years), 'Year': years, 'GDP': prediction})
         predictions_gdp = pd.concat([predictions_gdp, country_predictions], ignore_index=True)

@@ -17,9 +17,14 @@ st.set_page_config(
 )
 
 # ----------------- DATA ----------------------
-CO2 = pd.read_csv("./data/CO2.csv")
-GDP = pd.read_csv("./data/GDP.csv")
-df = pd.read_csv("./data/df.csv")
+@st.cache_data
+def load_data(url):
+    df = pd.read_csv(url)
+    return df
+
+df = load_data("./data/df.csv")
+CO2 = load_data("./data/CO2.csv")
+GDP = load_data("./data/GDP.csv")
 
 # ----------------- PAGES ---------------------
 st.title(page_title + ' ' + page_icon)
