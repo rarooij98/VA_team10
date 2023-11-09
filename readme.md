@@ -1,12 +1,24 @@
 # Title
-This app shows ...
+We onderzoeken de CO2 emissies van landen over de jaren heen, en vergelijken de emissies van een land met het GDP. 
+         Stoten landen met een hoger GDP meer uit, is deze verhouding over de jaren heen veranderd? We gebruiken een lineair 
+         regressie model om de uitstoot voor komende jaren te voorspellen.
 
 ## Prerequisites
 
 List any prerequisites or dependencies that users need to have installed before they can use your project. Include versions if necessary.
 
 - Python 3.11
-- Other dependencies...
+- streamlit 1.27.0
+- pandas 2.1.1
+- numpy 1.26.0
+- matplotlib 3.8.0
+- seaborn 0.12.2
+- python-dotenv 1.0.0
+- plotly 5.17.0
+- geopandas 0.14
+- folium 0.14.0
+- streamlit_folium 0.15.0
+- statsmodels 0.14.0
 
 ## Getting Started
 
@@ -46,6 +58,15 @@ Here is a breakdown of the columns in the dataset:
 
 ## Column Explanations
 
-...
-
-
+* "Country":
+* "Code":
+* "Year":
+* "GDP":
+* "Calling Code":
+* "CO2 emission (Tons)":
+* "Population(2022)":
+* "Area":
+* "% of World":
+* "Density(km2)":
+* "latitude":
+* "longitude":

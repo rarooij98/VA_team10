@@ -61,6 +61,10 @@ def model_fit(data, prediction_data, model):
     # Set the layout and show the plot
     plt.tight_layout()
     st.pyplot(fig, use_container_width=True)
+    
+    st.caption('* De Q-Q plot kan worden gebruikt om te onderzoeken of de verdeling van de residuals normaal is.')
+    st.caption('* De Residuals versus Fitted Values plot wordt gebruikt om niet-lineariteit en outliers te detecteren. Hiermee zie je of de residuals gelijkmatig verdeeld zijn rond de "0"-waardelijn en of de spreiding en het patroon van de punten op verschillende niveaus hetzelfde zijn.')
+    st.caption('* De Scale-Location plot laat zien of de residuals gelijkmatig verdeeld zijn over de voorspelde waardes. Het is goed als je een horizontale lijn ziet met gelijkmatig (willekeurig) verspreide punten.')
 
 #* Function to plot totals model:
 def plot_model(data, prediction, model):
@@ -112,7 +116,7 @@ def create_mv_model(data, y):
     prediction_data_pop = explanatory_data_pop.assign(Population=mdl_pop.predict(explanatory_data_pop))
 
     # Create a multivariable model with the GDP & Population predictions
-    model = ols(f"{y} ~ Year + GDP + Population", data=data).fit()
+    model = ols(f"{y} ~ GDP + Population", data=data).fit()
     # Make a prediction for the years 2021-2050 using the multivariable model
     explanatory_data = pd.DataFrame({"Year": np.arange(2021, 2051), "GDP": prediction_data_gdp['GDP'], "Population": prediction_data_pop['Population']})
     prediction_data = explanatory_data.assign(Emission=model.predict(explanatory_data))
@@ -151,7 +155,7 @@ def countries_model(data):
         country_data = data[data['Country'] == country]
         gdp = predictions_gdp[predictions_gdp['Country'] == country]['GDP']
         pop = predictions_pop[predictions_pop['Country'] == country]['Population']
-        mv_model_country = ols("Emission ~ Year + GDP + Population", data=country_data).fit()
+        mv_model_country = ols("Emission ~ GDP + Population", data=country_data).fit()
         prediction = mv_model_country.predict(exog=pd.DataFrame({'Year': years, 'GDP': gdp, 'Population': pop}))
         country_predictions = pd.DataFrame({'Country': [country] * len(years), 'Year': years, 'Emission': prediction})
         predictions = pd.concat([predictions, country_predictions], ignore_index=True)
