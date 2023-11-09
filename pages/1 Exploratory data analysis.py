@@ -41,26 +41,44 @@ def scatterplot(df):
     df_filtered = df[df['GDP'] <= 20000000000000]
     # Create a scatter plot of CO2 emissions vs GDP (filtered)
     fig = px.scatter(df_filtered, x='GDP', y='CO2 emission (Tons)',trendline="ols", title='CO2 Emissies vs GDP')
-    # Add labels to the axes
+    # Add labels and trendline
     fig.update_layout(xaxis_title='GDP', yaxis_title='CO2 Emissie (Tons)')
-    # Add a trendline
     fig.update_traces(line=dict(color='red', width=2, dash='dash'))
     # Show the scatter plot
     st.plotly_chart(fig, use_container_width=True)
     
 #* Histogram / Bar
-def histogram_co2(df):
+def histogram_co2(df):  
     # Group the dataframe by Year and calculate the average CO2 emission
     df_avg_co2 = df.groupby('Year')['CO2 emission (Tons)'].mean().reset_index()
-    fig = px.histogram(df_avg_co2, x='Year', y='CO2 emission (Tons)', title='Gemiddelde CO2 Emissie per jaar')
+    fig = px.bar(df_avg_co2, x='Year', y='CO2 emission (Tons)', title='Gemiddelde CO2 Emissie per jaar')
     # Add a slider to select the year
     fig.update_layout(xaxis=dict(type='category'), xaxis_title='Jaar', yaxis_title='Gemiddelde CO2 Emissie (Tons)')
     fig.update_traces(marker_color='rgb(158,202,225)', marker_line_color='rgb(8,48,107)', marker_line_width=1.5)
+    y_axis_range = [0, df_avg_co2['CO2 emission (Tons)'].max() + 10]
+    fig.update_yaxes(range=y_axis_range)
+    sliders = [dict(
+        active=0,
+        steps=[
+            dict(
+                label=str(year),
+                method="update",
+                args=[{"x": [df_avg_co2['Year']], "y": [df_avg_co2['CO2 emission (Tons)']*(df_avg_co2['Year'] == year)],
+                       "text": [df_avg_co2['Year'] if year == y else '' for y in df_avg_co2['Year']]}],
+            )
+            for year in df_avg_co2['Year']
+        ]
+    )]
+    fig.update_layout(
+        sliders=sliders
+    )
+    # Display the figure in the Streamlit app
     st.plotly_chart(fig, use_container_width=True)
+    
 def bar_gdp(df):
     # Create the bar chart using Plotly Express to display average GDP per year
     df_avg_gdp = df.groupby('Year', as_index=False)['GDP'].mean()
-    fig = px.bar(df_avg_gdp, x='Year', y='GDP', title='Average GDP by Year')
+    fig = px.bar(df_avg_gdp, x='Year', y='GDP', title='Gemiddelde GDP per jaar')
     st.plotly_chart(fig, use_container_width=True)
 
 #* Call each plot in their own tab
@@ -68,9 +86,9 @@ def bar_gdp(df):
 tab1, tab2 = st.tabs(["1D", "2D"])
 
 with tab1:
-   boxplot(df)
    histogram_co2(df)
    bar_gdp(df)
+   boxplot(df)
 with tab2:
    scatterplot(df)
 
