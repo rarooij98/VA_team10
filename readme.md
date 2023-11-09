@@ -1,11 +1,9 @@
-# CO2 uitstoot & GDP
-In deze Streamlit app onderzoeken we de CO2 emissies van landen over de jaren heen, en vergelijken de emissies van een land met het GDP. 
-         Welke landen stoten het meeste CO2 uit, hebben zij een hoger GDP? We gebruiken een lineair 
-         regressie model om de uitstoot voor komende jaren te voorspellen aan de hand van de GDP en Population van landen.
+# 🌎 CO2 uitstoot & GDP
+In this Streamlit app we examine the CO2 emissions of countries over the years and compare a country's emissions with their GDP. Which countries emit the most CO2, do they have a higher GDP? We use a linear regression model to predict emissions for future years based on the GDP and Population of countries.
 
-## Prerequisites
+## Dependencies
 
-List any prerequisites or dependencies that users need to have installed before they can use your project. Include versions if necessary.
+Dependencies to install for this project:
 
 - Python 3.11
 - streamlit 1.27.0
