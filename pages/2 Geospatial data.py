@@ -48,8 +48,12 @@ df_map = df_map.rename(columns={'CO2 emission (Tons)': 'Emissions'})
 
 #* Map for CO2
 def co2_map(gdf, df_map):
+    # Choose Country
+    options = df_map['Country'].unique()
+    selected = st.selectbox("Kies een land", options=options, key="CO2_c")
+    df_show = df_map[df_map['Country']==selected]
     # Show dataframe
-    st.write(df_map.head(5))
+    st.dataframe(df_show)
     # Filter gdf to include only countries in df_map
     gdf = gdf[gdf['Country'].isin(df_map['Country'])]
     # Create the map
@@ -125,9 +129,13 @@ def co2_map(gdf, df_map):
 
 #* Map for GDP
 def gdp_map(gdf):
-        # Show dataframe
         df_map_GDP = df_2[['Country', 'Year', 'GDP']]
-        st.write(df_map_GDP.head(5))
+        # Choose Country
+        options_gdp = df_map_GDP['Country'].unique()
+        selected_gdp = st.selectbox("Kies een land", options=options_gdp, key="CO2_g")
+        df_show_gdp = df_map_GDP[df_map_GDP['Country']==selected_gdp]
+        # Show dataframe
+        st.dataframe(df_show_gdp)
         # Filter gdf to include only countries in df_map
         gdf = gdf[gdf['Country'].isin(df_map_GDP['Country'])]
         # Choose Year
@@ -154,7 +162,7 @@ def gdp_map(gdf):
 
 #* Mean/median by Country
 def get_mean(df_2):
-        st.title('Country Information')
+        #st.title('Country Information')
         df_3 = df_2.groupby('Country').agg({'GDP': ['mean', 'median', 'sum', 'min', 'max'], 
                                             'CO2 emission (Tons)': ['mean', 'median', 'sum', 'min', 'max']})
         df_3 = df_3.reset_index()
@@ -173,7 +181,7 @@ def get_mean(df_2):
         
         # Display filtered dataset
         contact_option_3 = df_3['Country']
-        contact_selected_3 = st.selectbox("Kies een jaar", options=contact_option_3, key="mean")
+        contact_selected_3 = st.selectbox("Kies een land", options=contact_option_3, key="mean")
         df_3[df_3['Country']==contact_selected_3]
         return df_3
 
