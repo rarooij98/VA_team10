@@ -156,8 +156,8 @@ def plot_model_countries(data, prediction):
 #* Multivariable model
 def create_mv_model(data, y):
     # Predict the total GDP for the years 2021-2050
-    # mdl_gdp = ols("GDP ~ Year", data=data).fit()
-    mdl_gdp = ols("GDP ~ Year + np.power(Year, 2)", data=data).fit()
+    mdl_gdp = ols("GDP ~ Year", data=data).fit()
+    # mdl_gdp = ols("GDP ~ Year + np.power(Year, 2)", data=data).fit()
     explanatory_data_gdp = pd.DataFrame({"Year": np.arange(2021, 2051)})
     prediction_data_gdp = explanatory_data_gdp.assign(GDP=mdl_gdp.predict(explanatory_data_gdp))
     # Predict the total Population for the years 2021-2050
