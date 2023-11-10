@@ -184,8 +184,8 @@ def countries_model(data):
     years = np.arange(2021, 2051)
     for country in data['Country'].unique():
         country_data = data[data['Country'] == country]
-        mdl_co2_vs_year = ols("GDP ~ Year", data=country_data).fit()
-        # mdl_co2_vs_year = ols("GDP ~ Year + np.power(Year, 2)", data=country_data).fit()
+        # mdl_co2_vs_year = ols("GDP ~ Year", data=country_data).fit()
+        mdl_co2_vs_year = ols("GDP ~ Year + np.power(Year, 2)", data=country_data).fit()
         prediction = mdl_co2_vs_year.predict(exog=pd.DataFrame({'Year': years, 'Intercept': 1}))
         country_predictions = pd.DataFrame({'Country': [country] * len(years), 'Year': years, 'GDP': prediction})
         predictions_gdp = pd.concat([predictions_gdp, country_predictions], ignore_index=True)
@@ -205,8 +205,8 @@ def countries_model(data):
         country_data = data[data['Country'] == country]
         gdp = predictions_gdp[predictions_gdp['Country'] == country]['GDP']
         pop = predictions_pop[predictions_pop['Country'] == country]['Population']
-        # mv_model_country = ols("Emission ~ GDP + Population", data=country_data).fit()
-        mv_model_country = ols("Emission ~ GDP + Population + np.power(GDP, 2) + np.power(Population, 2)", data=country_data).fit()
+        mv_model_country = ols("Emission ~ GDP + Population", data=country_data).fit()
+        # mv_model_country = ols("Emission ~ GDP + Population + np.power(GDP, 2) + np.power(Population, 2)", data=country_data).fit()
         prediction = mv_model_country.predict(exog=pd.DataFrame({'Year': years, 'GDP': gdp, 'Population': pop}))
         country_predictions = pd.DataFrame({'Country': [country] * len(years), 'Year': years, 'Emission': prediction})
         predictions = pd.concat([predictions, country_predictions], ignore_index=True)
